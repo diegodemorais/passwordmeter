@@ -19,7 +19,8 @@ public class PasswordMeter implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long passwordMeterId;
     
-    private int nota=0, complexidade=-1;
+    private String complexidade;
+    private int nota=0;
     public int chars=0, upperLetters=0, lowLetters=0, numbers=0, symbols=0, midNumsSyms=0, requirements=0, lettersOnly=0, numbersOnly=0, repeatChars=0, upperConsec=0, lowConsec=0, numbersConsec=0, lettersSeq=0, numbersSeq=0, symbolsSeq=0;
     public int deduc=0, bonus=0;
     
@@ -28,7 +29,7 @@ public class PasswordMeter implements Serializable {
         return nota;
     }
     
-     public int getComplexidade() {
+     public String getComplexidade() {
         return complexidade;
     }
      
@@ -47,12 +48,14 @@ public class PasswordMeter implements Serializable {
         this.complexidade =  this.setComplexidade();
     }
     
-    private int setComplexidade(){
-        if (this.nota < 25) return 0;
-        else if (this.nota < 50) return 1;
-        else if (this.nota < 75) return 3;
-        else if (this.nota <= 100) return 4;
-        else return -1;
+    private String setComplexidade(){
+        if (this.nota == 0) return "Muito curta";
+        else if (this.nota < 25) return "Muito fraca";
+        else if (this.nota < 50) return "Fraca";
+        else if (this.nota < 75) return "Boa";
+        else if (this.nota < 100) return "Forte";
+        else if (this.nota == 100) return "Muito forte";
+        else return "Muito curta";
     }
     
     private int setBonus(char[] pass){
