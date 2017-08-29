@@ -1,6 +1,7 @@
 package com.passwordmeter.entity;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +20,10 @@ public class PasswordMeter implements Serializable {
     private Long passwordMeterId;
     
     private int nota=0, complexidade=-1;
+    public int chars=0, upperLetters=0, lowLetters=0, numbers=0, symbols=0, midNumsSyms=0, requirements=0, lettersOnly=0, numbersOnly=0, repeatChars=0, upperConsec=0, lowConsec=0, numbersConsec=0, lettersSeq=0, numbersSeq=0, symbolsSeq=0;
+    public int deduc=0, bonus=0;
     
+           
     public int getNota() {
         return nota;
     }
@@ -29,7 +33,8 @@ public class PasswordMeter implements Serializable {
     }
      
     public void setNotaComplexidade(String password){
-        int bonus;
+        this.nota = 0;
+        int bonus=0;
         int deductions=0;
         
         char[] pass = password.toCharArray();
@@ -37,7 +42,8 @@ public class PasswordMeter implements Serializable {
         bonus = setBonus(pass);
         deductions = setDeductions(pass);
         
-        this.nota = bonus + deductions;
+        this.nota = bonus - deductions;
+        if (this.nota>100) this.nota = 100;
         this.complexidade =  this.setComplexidade();
     }
     
@@ -60,6 +66,8 @@ public class PasswordMeter implements Serializable {
         bonus+=midNumsSyms(pass);
         bonus+=requirements(pass);
         
+        this.bonus = bonus;
+        
         return bonus;
     }
 
@@ -76,6 +84,8 @@ public class PasswordMeter implements Serializable {
         deduc+=numbersSeq(pass);
         deduc+=symbolsSeq(pass);
         
+        this.deduc = deduc;
+        
         return deduc;
     }
     
@@ -86,8 +96,9 @@ public class PasswordMeter implements Serializable {
     //Bonuses
     private int chars(char[] pass){
         int result = this.size(pass);
-        
-        return (result*4);
+        result = (result*4);
+        this.chars = result;
+        return result;
     }
     
     private int upperLetters(char[] pass){
@@ -97,9 +108,12 @@ public class PasswordMeter implements Serializable {
             if (Character.isUpperCase(c))
                 result++;
         }
-        
-        return ((this.size(pass)-result)*4);
+
+        result = (result > 0) ? ((this.size(pass)-result)*2) : 0;        
+        this.upperLetters = result;
+        return result;
     }    
+    
     private int lowLetters(char[] pass){
         int result=0;
         
@@ -108,7 +122,9 @@ public class PasswordMeter implements Serializable {
                 result++;
         }
         
-        return ((this.size(pass)-result)*4);
+        result = (result > 0) ? ((this.size(pass)-result)*2): 0;        
+        this.lowLetters = result;
+        return result;
     }
     private int numbers(char[] pass){
         int result=0;
@@ -117,9 +133,12 @@ public class PasswordMeter implements Serializable {
             if (Character.isDigit(c))
                 result++;
         }
-        
-        return (result*4);
+        result = (result*4);
+        result = (this.lowLetters > 0 || this.upperLetters > 0) ? result : 0;
+        this.numbers = result;
+        return result;
     }
+    
     private int symbols(char[] pass){
         int result=0;
         
@@ -128,7 +147,9 @@ public class PasswordMeter implements Serializable {
                 result++;
         }
         
-        return (result*6);
+        result = (result*6);        
+        this.symbols = result;
+        return result;
     }
     private int midNumsSyms(char[] pass){
         int result=0;
@@ -140,8 +161,10 @@ public class PasswordMeter implements Serializable {
                     result++;
             }            
         }
-
-        return (result+2);
+        
+        result = (result*2);        
+        this.midNumsSyms = result;
+        return result;
     }
     private int requirements(char[] pass){
 //        Minimum 8 characters in length
@@ -159,7 +182,10 @@ public class PasswordMeter implements Serializable {
             if (this.numbers(pass)>0) result++;
             if (this.symbols(pass)>0) result++;
         }
-        return (result*2);
+
+        result = (result*2);        
+        this.requirements = result;
+        return result;
     }
     
     //Deductions
@@ -170,8 +196,9 @@ public class PasswordMeter implements Serializable {
             if (Character.isLetter(c))
                 result++;
         }
-        
-        return (result==this.size(pass)) ? -result : 0;
+        result = (result==this.size(pass)) ? result : 0;        
+        this.lettersOnly = result;
+        return result;
     }
     private int numbersOnly(char[] pass){
         int result=0;
@@ -180,22 +207,61 @@ public class PasswordMeter implements Serializable {
             if (Character.isDigit(c))
                 result++;
         }
-        return (result==this.size(pass)) ? -result : 0;
+        result = (result==this.size(pass)) ? result : 0;
+        this.numbersOnly = result;
+        return result;
     } 
     private int repeatChars(char[] pass){
         int result=0;
         int size=this.size(pass);
+        int[] repeats = new int[size];
         
         if (size>=2) {
-            char last = pass[0];
-            for(int i=1;i<size;i++){
-                if (Character.toUpperCase(pass[i])==Character.toUpperCase(last))
-                    result++;
-                last=pass[i];
+            String passLower = pass.toString().toLowerCase();
+            char[] passLowerChar = passLower.toCharArray();
+            
+            for (int i=0;i<size;i++){
+                int cnt=0, idx=0;
+                while(true){
+                    idx = passLower.indexOf(passLower, idx);
+                    if (idx == -1) break;
+                    idx++;
+                    cnt++;
+                }
+                if (cnt>1 && repeats[passLowerChar[i]]==0){
+                    repeats[passLowerChar[i]]=cnt;
+                    result += cnt;
+                }
             }
         }
+        if (result>0) result = (result / size) *10;
+        
+        this.repeatChars = result;
         return result;
-    } 
+        
+//var repeats = {};
+//var _p = p.toLowerCase();
+//var arr = _p.split('');
+//counts.neg.repeated = 0;
+//for(i = 0; i< arr.length; i++) {
+//var cnt = 0, idx = 0;
+//while (1) {
+//        var idx = _p.indexOf(arr[i], idx);
+//        if (idx == -1) break;
+//        idx++;
+//        cnt++;
+//}
+//if (cnt > 1 && !repeats[_p[i]]) {
+//        repeats[_p[i]] = cnt;
+//        counts.neg.repeated += cnt;
+//if (counts.neg.repeated) {
+//        strength -= (counts.neg.repeated / counts.pos.numChars) * 10;
+
+
+    }
+        
+        
+
     private int upperConsec(char[] pass){
         int result=0;
         int size=this.size(pass);
@@ -208,6 +274,9 @@ public class PasswordMeter implements Serializable {
                 last=Character.isUpperCase(pass[i]);
             }
         }
+        
+        this.upperConsec = result;
+        
         return -(result*2);
     }     
     private int lowConsec(char[] pass){
@@ -222,7 +291,10 @@ public class PasswordMeter implements Serializable {
                 last=Character.isLowerCase(pass[i]);
             }
         }
-        return -(result*2);
+        
+        result = (result*2);
+        this.lowConsec = result;
+        return result;
     }     
     private int numbersConsec(char[] pass){
         int result=0;
@@ -236,49 +308,75 @@ public class PasswordMeter implements Serializable {
                 last=Character.isDigit(pass[i]);
             }
         }
-        return -(result*2);
+        result = (result*2);        
+        this.numbersConsec = result;
+        return result;
     } 
     private int lettersSeq(char[] pass){
         int result=0;
         int size=this.size(pass);
         
-        if (size>=2) {
-            int last = (int) (Character.isLetter(pass[0]) ? pass[0] : -1);
-            for(int i=1;i<size;i++){
-                if ((((int) pass[i]) == last+1) && Character.isLetter(pass[i])) 
+        if (size>=3) {
+            fora: for(int i=0;i<size-2;i++){
+                int[] sub = new int[3];
+                for(int j=i,k=0;j<(i+3);j++,k++){
+                    if (!Character.isLetter(pass[j]))
+                        continue fora;
+                    else 
+                        sub[k] = (int) Character.toLowerCase(pass[j]);
+                }
+                Arrays.sort(sub);
+                if ( (sub[2] == sub[1]+1) && (sub[1] == sub[0]+1) )
                     result++;
-                last=(int) (Character.isLetter(pass[i]) ? pass[i] : -1);
             }
         }
-        return -(result*3);
+        result = (result > 0) ? (result*3) : 0;        
+        this.lettersSeq = result;
+        return result;
     } 
     private int numbersSeq(char[] pass){
         int result=0;
         int size=this.size(pass);
         
-        if (size>=2) {
-            int last = (int) (Character.isDigit(pass[0]) ? pass[0] : -1);
-            for(int i=1;i<size;i++){
-                if ((((int) pass[i]) == last+1) && Character.isDigit(pass[i])) 
+        if (size>=3) {
+            fora: for(int i=0;i<size-2;i++){
+                int[] sub = new int[3];
+                for(int j=i,k=0;j<(i+3);j++,k++){
+                    if (!Character.isDigit(pass[j]))
+                        continue fora;
+                    else 
+                        sub[k] = (int) pass[j];
+                }
+                Arrays.sort(sub);
+                if ( (sub[2] == sub[1]+1) && (sub[1] == sub[0]+1) )
                     result++;
-                last=(int) (Character.isDigit(pass[i]) ? pass[i] : -1);
             }
         }
-        return -(result*3);
+        result = (result > 0) ? (result*3) : 0;        
+        this.numbersSeq = result;
+        return result;
     } 
     private int symbolsSeq(char[] pass){
         int result=0;
         int size=this.size(pass);
         
-        if (size>=2) {
-            int last = (int) ((!Character.isDigit(pass[0]) && !Character.isLetter(pass[0])) ? pass[0] : -1);
-            for(int i=1;i<size;i++){
-                if ((((int) pass[i]) == last+1) && (!Character.isDigit(pass[i]) && !Character.isLetter(pass[i]))) 
+        if (size>=3) {
+            fora: for(int i=0;i<size-2;i++){
+                int[] sub = new int[3];
+                for(int j=i,k=0;j<(i+3);j++,k++){
+                    if (Character.isLetterOrDigit(pass[j]))
+                        continue fora;
+                    else 
+                        sub[k] = (int) pass[j];
+                }
+                Arrays.sort(sub);
+                if ( (sub[2] == sub[1]+1) && (sub[1] == sub[0]+1) )
                     result++;
-                last=(int) ((!Character.isDigit(pass[i]) && !Character.isLetter(pass[i])) ? pass[i] : -1);
             }
         }
-        return -(result*3);
+        result = (result > 0) ? (result*3) : 0;        
+        this.symbolsSeq = result;
+        return result;
     }     
      
 //Additions	Type	Rate
@@ -299,8 +397,6 @@ public class PasswordMeter implements Serializable {
 //lettersSeq Sequential Letters (3+)	Flat	-(n*3)
 //numbersSeq Sequential Numbers (3+)	Flat	-(n*3)
 //symbolsSeq Sequential Symbols (3+)	Flat	-(n*3)
-    
-    
     
 
 }

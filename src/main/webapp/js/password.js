@@ -9,7 +9,7 @@
 //});
 var app = angular.module('PasswordMeter', []);
 app.controller('PasswordMeterController', function($scope, $http) {
-    $scope.submit = function() {
+    $scope.change = function() {
         $http({
             method : "GET",
             url : "pass=" + $scope.form.password

@@ -1,14 +1,24 @@
 <!doctype html>
-<html ng-app>
-  <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
-  </head>
-  <body>
-    <div>
-      <label>AVALIADOR DE SEGURANÇA DE SENHA</label>
-      <input type="text" ng-model="yourName" placeholder="Senha">
-      <hr>
-      <h1>Hello {{yourName}}!</h1>
-    </div>
-  </body>
+<html ng-app="PasswordMeter">
+	<head>
+		<title>Avaliador de Segurança de Senha - By Diego de Morais</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+    	<script src="js/password.js"></script>
+	</head>
+
+	<body>
+            <div ng-controller="PasswordMeterController">                
+              
+                <label>AVALIADOR DE SEGURANÇA DE SENHA</label>                    
+                <input type="text" ng-model="form.password" placeholder="Senha" ng-change="change()">
+  
+                <p>A nota eh {{meter.nota}}</p>
+                <p>A complexidade eh {{meter.complexidade}}</p>                                
+                
+            </div>            
+         
+            
+            
+            
+	</body>
 </html>
