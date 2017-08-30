@@ -16,9 +16,8 @@ $ mvn test
 ```
 
 ### Frontend
-
-```sh
-$ http://localhost:8081/pass=Diego123
+```browser
+http://localhost:8081/pass=Diego123
 `````
 
 ### Call example
