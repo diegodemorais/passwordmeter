@@ -17,10 +17,10 @@ $ mvn test
 
 ### Frontend
 ```browser
-http://localhost:8081/pass=Diego123
+http://localhost:8081
 `````
 
-### Call example
+### Rest call example
 
 ```sh
 $ curl http://localhost:8081/pass=Diego123
