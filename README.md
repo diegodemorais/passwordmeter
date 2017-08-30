@@ -20,7 +20,7 @@ $ mvn test
 http://localhost:8081
 `````
 
-### Rest call example
+### Rest get call example
 
 ```sh
 $ curl http://localhost:8081/pass=Diego123
