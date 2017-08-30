@@ -1,9 +1,7 @@
 package com.passwordmeter.controller;
 
 import com.passwordmeter.entity.PasswordMeter;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,15 +27,15 @@ public class PasswordMeterController {
     }    
     
     
-    public ResponseEntity<String> okRequest() {
-        String content = ("Nota: " + meter.getNota() + "   Complexidade: "+ meter.getComplexidade());
-        HttpHeaders responseHeaders = new HttpHeaders();
-        return new ResponseEntity<>(content,responseHeaders,HttpStatus.OK);
-    }    
-    
-    public ResponseEntity<String> badRequest(){
-        String content = "400 Bad Request";
-        HttpHeaders responseHeaders = new HttpHeaders();
-        return new ResponseEntity<>(content,responseHeaders,HttpStatus.BAD_REQUEST);
-    } 
+//    public ResponseEntity<String> okRequest() {
+//        String content = ("Nota: " + meter.getNota() + "   Complexidade: "+ meter.getComplexidade());
+//        HttpHeaders responseHeaders = new HttpHeaders();
+//        return new ResponseEntity<>(content,responseHeaders,HttpStatus.OK);
+//    }    
+//    
+//    public ResponseEntity<String> badRequest(){
+//        String content = "400 Bad Request";
+//        HttpHeaders responseHeaders = new HttpHeaders();
+//        return new ResponseEntity<>(content,responseHeaders,HttpStatus.BAD_REQUEST);
+//    } 
 }
