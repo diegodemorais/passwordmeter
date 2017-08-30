@@ -28,31 +28,15 @@ public class PasswordMeterTests{
     @Test
     public void passDiego123() throws Exception {
         this.mockMvc.perform(post("/pass=Diego123").accept(MediaType.parseMediaType("application/json")))
-                //.andExpect(status().isOk())
-                //.andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(content().string("{\"nota\":65,\"complexidade\":3,\"chars\":32,\"upperLetters\":14,\"lowLetters\":8,\"numbers\":12,\"symbols\":0,\"midNumsSyms\":4,\"requirements\":8,\"lettersOnly\":0,\"numbersOnly\":0,\"repeatChars\":0,\"upperConsec\":0,\"lowConsec\":6,\"numbersConsec\":4,\"lettersSeq\":0,\"numbersSeq\":3,\"symbolsSeq\":0,\"deduc\":13,\"bonus\":78}"));}    
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("{\"nota\":65,\"complexidade\":\"Forte\",\"chars\":32,\"upperLetters\":14,\"lowLetters\":8,\"numbers\":12,\"symbols\":0,\"midNumsSyms\":4,\"requirements\":8,\"lettersOnly\":0,\"numbersOnly\":0,\"repeatChars\":0,\"upperConsec\":0,\"lowConsec\":6,\"numbersConsec\":4,\"lettersSeq\":0,\"numbersSeq\":3,\"symbolsSeq\":0}"));}    
+    
+    @Test
+    public void passaaa() throws Exception {
+        this.mockMvc.perform(post("/pass=aaa").accept(MediaType.parseMediaType("application/json")))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("{\"nota\":0,\"complexidade\":\"Muito fraca\",\"chars\":12,\"upperLetters\":0,\"lowLetters\":0,\"numbers\":0,\"symbols\":0,\"midNumsSyms\":0,\"requirements\":0,\"lettersOnly\":3,\"numbersOnly\":0,\"repeatChars\":6,\"upperConsec\":0,\"lowConsec\":4,\"numbersConsec\":0,\"lettersSeq\":0,\"numbersSeq\":0,\"symbolsSeq\":0}"));}    
 
-//    @Test
-//    public void testReset() throws Exception {
-//        this.mockMvc.perform(post("/").accept(MediaType.parseMediaType("application/json")))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("application/json;charset=UTF-8"))
-//                .andExpect(content().string("(0, 0, N)"));
-//    }
-//   
-//    @Test
-//    public void testCenario3() throws Exception {
-//        this.mockMvc.perform(post("/position").accept(MediaType.parseMediaType("application/json")))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("application/json;charset=UTF-8"))
-//                .andExpect(content().string("(0, 2, W)"));
-//    }       
-//
-//    @Test
-//    public void testCenario4() throws Exception {
-//        this.mockMvc.perform(post("/AAA").accept(MediaType.parseMediaType("application/json")))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(content().contentType("application/json;charset=UTF-8"))
-//                .andExpect(content().string("400 Bad Request"));
-//    }    
 }

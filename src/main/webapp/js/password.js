@@ -11,7 +11,7 @@ var app = angular.module('PasswordMeter', []);
 app.controller('PasswordMeterController', function($scope, $http) {
     $scope.change = function() {
         $http({
-            method : "GET",
+            method : "POST",
             url : "pass=" + $scope.form.password
             }).then(function successCallback(response) {
         $scope.meter = response.data;
@@ -19,4 +19,16 @@ app.controller('PasswordMeterController', function($scope, $http) {
         console.log(response.statusText);
         });
     };
+    
+    this.$onInit = function() {
+        $http({
+            method : "POST",
+            url : "pass="
+            }).then(function successCallback(response) {
+        $scope.meter = response.data;
+        }, function errorCallback(response) {
+        console.log(response.statusText);
+        });
+    };
+    
 });

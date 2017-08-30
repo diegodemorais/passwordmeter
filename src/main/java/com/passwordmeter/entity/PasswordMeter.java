@@ -2,7 +2,8 @@ package com.passwordmeter.entity;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import javax.persistence.Entity;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,19 +20,67 @@ public class PasswordMeter implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long passwordMeterId;
     
+    private int nota=0, bonus=0, deduc=0;
     private String complexidade;
-    private int nota=0;
-    public int chars=0, upperLetters=0, lowLetters=0, numbers=0, symbols=0, midNumsSyms=0, requirements=0, lettersOnly=0, numbersOnly=0, repeatChars=0, upperConsec=0, lowConsec=0, numbersConsec=0, lettersSeq=0, numbersSeq=0, symbolsSeq=0;
-    public int deduc=0, bonus=0;
+    private int chars=0, upperLetters=0, lowLetters=0, numbers=0, symbols=0, midNumsSyms=0, requirements=0, lettersOnly=0, numbersOnly=0, repeatChars=0, upperConsec=0, lowConsec=0, numbersConsec=0, lettersSeq=0, numbersSeq=0, symbolsSeq=0;
+
     
            
     public int getNota() {
         return nota;
     }
-    
      public String getComplexidade() {
         return complexidade;
     }
+    public int getUpperLetters() {
+        return upperLetters;
+    }
+    public int getLowLetters() {
+      return lowLetters;
+    }
+    public int getNumbers() {
+      return numbers;
+    }
+    public int getSymbols() {
+      return symbols;
+    }
+    public int getMidNumsSyms() {
+      return midNumsSyms;
+    }
+    public int getChars() {
+      return chars;
+    }
+    public int getRequirements() {
+      return requirements;
+    }
+    public int getLettersOnly() {
+      return lettersOnly;
+    }
+    public int getNumbersOnly() {
+      return numbersOnly;
+    }    
+    public int getRepeatChars() {
+      return repeatChars;
+    }
+    public int getUpperConsec() {
+      return upperConsec;
+    }
+    public int getLowConsec() {
+      return lowConsec;
+    }
+    public int getNumbersConsec() {
+      return numbersConsec;
+    }
+    public int getLettersSeq() {
+      return lettersSeq;
+    }
+    public int getNumbersSeq() {
+      return numbersSeq;
+    }
+    public int getSymbolsSeq() {
+      return symbolsSeq;
+    }
+    
      
     public void setNotaComplexidade(String password){
         this.nota = 0;
@@ -44,17 +93,23 @@ public class PasswordMeter implements Serializable {
         deductions = setDeductions(pass);
         
         this.nota = bonus - deductions;
-        if (this.nota>100) this.nota = 100;
+        this.nota -= setRepeatChars(pass);
+        
+        if (this.nota>100)
+            this.nota = 100;
+        else if (this.nota < 0)
+            this.nota = 0;
+       
         this.complexidade =  this.setComplexidade();
     }
     
     private String setComplexidade(){
-        if (this.nota == 0) return "Muito curta";
-        else if (this.nota < 25) return "Muito fraca";
-        else if (this.nota < 50) return "Fraca";
-        else if (this.nota < 75) return "Boa";
-        else if (this.nota < 100) return "Forte";
-        else if (this.nota == 100) return "Muito forte";
+        if (this.nota == 0 & this.chars == 0) return "Muito curta";
+        else if (this.nota < 20) return "Muito fraca";
+        else if (this.nota < 40) return "Fraca";
+        else if (this.nota < 60) return "Boa";
+        else if (this.nota < 80) return "Forte";
+        else if (this.nota <= 100) return "Muito forte";
         else return "Muito curta";
     }
     
@@ -79,7 +134,6 @@ public class PasswordMeter implements Serializable {
         
         deduc+=lettersOnly(pass);
         deduc+=numbersOnly(pass);
-        deduc+=repeatChars(pass);
         deduc+=upperConsec(pass);
         deduc+=lowConsec(pass);        
         deduc+=numbersConsec(pass);
@@ -90,6 +144,20 @@ public class PasswordMeter implements Serializable {
         this.deduc = deduc;
         
         return deduc;
+    }
+    
+    private int setRepeatChars(char[] pass){
+        int result=0;
+        int counts = repeatChars(pass);
+        
+        if (counts>0){
+            result = (int)Math.round(((double)counts / this.nota) * 10);
+        }
+        
+        this.repeatChars = result;
+            
+        return result;    
+
     }
     
     private int size(char[] pass){
@@ -215,55 +283,45 @@ public class PasswordMeter implements Serializable {
         return result;
     } 
     private int repeatChars(char[] pass){
-        int result=0;
-        int size=this.size(pass);
-        int[] repeats = new int[size];
+    /*On the passwordmeter.com. the deduction "Repeat Characters (Case Insensitive)" tells: "Rates that are too complex to summarize. See source code for details.".
+    But, the source code is unavailable right now: "The software downloads page is currently down for maintenance. We apologize for the inconvenience.".
+    Because of this, this particular item is not 100% right. Please, take this in consideration.*/
         
-        if (size>=2) {
-            String passLower = pass.toString().toLowerCase();
-            char[] passLowerChar = passLower.toCharArray();
-            
-            for (int i=0;i<size;i++){
-                int cnt=0, idx=0;
+        int result=0;
+        int size = this.size(pass);
+        
+        if (size>=2){
+            Map<Character,Integer> repeats = new HashMap<>();
+    //        int[] repeats = new int[this.size(pass)];
+            StringBuilder _p = new StringBuilder();
+            char[] _c = new char[size];
+            String[] _s = new String[size];
+            for(int i=0;i<size;i++){
+                _p.append(Character.toLowerCase(pass[i]));
+                _c[i] = Character.toLowerCase(pass[i]);
+                _s[i] = Character.toString(_c[i]);
+            }
+
+            int counts = 0;
+            for(int i=0;i<size;i++){
+                int cnt = 0, idx = 0;
                 while(true){
-                    idx = passLower.indexOf(passLower, idx);
+                    idx = _p.indexOf(_s[i], idx);
                     if (idx == -1) break;
                     idx++;
                     cnt++;
                 }
-                if (cnt>1 && repeats[passLowerChar[i]]==0){
-                    repeats[passLowerChar[i]]=cnt;
-                    result += cnt;
+                if (cnt > 1 && !repeats.containsKey(_c[i])) {
+                    repeats.put(_c[i], cnt);
+                    counts += cnt;
                 }
             }
+
+            if (counts>0)
+                result = counts;
         }
-        if (result>0) result = (result / size) *10;
-        
-        this.repeatChars = result;
         return result;
-        
-//var repeats = {};
-//var _p = p.toLowerCase();
-//var arr = _p.split('');
-//counts.neg.repeated = 0;
-//for(i = 0; i< arr.length; i++) {
-//var cnt = 0, idx = 0;
-//while (1) {
-//        var idx = _p.indexOf(arr[i], idx);
-//        if (idx == -1) break;
-//        idx++;
-//        cnt++;
-//}
-//if (cnt > 1 && !repeats[_p[i]]) {
-//        repeats[_p[i]] = cnt;
-//        counts.neg.repeated += cnt;
-//if (counts.neg.repeated) {
-//        strength -= (counts.neg.repeated / counts.pos.numChars) * 10;
-
-
     }
-        
-        
 
     private int upperConsec(char[] pass){
         int result=0;
@@ -401,5 +459,4 @@ public class PasswordMeter implements Serializable {
 //numbersSeq Sequential Numbers (3+)	Flat	-(n*3)
 //symbolsSeq Sequential Symbols (3+)	Flat	-(n*3)
     
-
 }
