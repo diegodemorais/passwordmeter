@@ -43,5 +43,5 @@ public class PasswordMeterTests{
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(content().string("{\"nota\":0,\"complexidade\":\"Muito fraca\",\"chars\":12,\"upperLetters\":0,\"lowLetters\":0,\"numbers\":0,\"symbols\":0,\"midNumsSyms\":0,\"requirements\":0,\"lettersOnly\":3,\"numbersOnly\":0,\"repeatChars\":6,\"upperConsec\":0,\"lowConsec\":4,\"numbersConsec\":0,\"lettersSeq\":0,\"numbersSeq\":0,\"symbolsSeq\":0}"));}    
-
+    
 }

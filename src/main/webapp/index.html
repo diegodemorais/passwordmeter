@@ -3,7 +3,7 @@
 	<head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>Avaliador de Segurança de Senha - Por Diego de Morais</title>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
     	<script src="js/password.js"></script>
     <link href="css/default.css" rel="stylesheet" type="text/css">
 	</head>
@@ -16,7 +16,7 @@
           <tr>
             <td bgcolor="#F8F8F8"><table width="100%" border="0" cellspacing="10">
               <tr>
-                <td colspan="3"><input type="text" placeholder="Senha" size="50" ng- ng-model="data.password"  ng-change="change();"></td>
+                  <td colspan="3"><input type="text" placeholder="Senha" size="50" ng-model="form.password" ng-change="change();"></td>
               </tr>
               <tr>
                   <td width="112" bgcolor="#989C9B" class="normalWhite"><b>{{meter.nota}}%</b></td>

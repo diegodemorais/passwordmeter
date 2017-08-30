@@ -1,6 +1,7 @@
 package com.passwordmeter.entity;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -214,7 +215,7 @@ public class PasswordMeter implements Serializable {
         int result=0;
         
         for(char c : pass){
-            if (!Character.isDigit(c) && !Character.isLetter(c))
+            if (!Character.isLetterOrDigit(c))
                 result++;
         }
         
@@ -417,6 +418,7 @@ public class PasswordMeter implements Serializable {
         this.numbersSeq = result;
         return result;
     } 
+    
     private int symbolsSeq(char[] pass){
         int result=0;
         int size=this.size(pass);
